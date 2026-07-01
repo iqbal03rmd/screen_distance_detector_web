@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rangefinder — Face Distance Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark">◎</span>
+      <div class="brand-text">
+        <h1>RANGEFINDER</h1>
+        <p class="brand-sub">Face-distance monitor &middot; MediaPipe FaceLandmarker</p>
+      </div>
+    </div>
+    <span id="statusPill" class="status-pill" data-state="idle">Memuat...</span>
+  </header>
+
+  <main class="layout">
+    <!-- Panel kiri: feed kamera + gauge jarak -->
+    <section class="stage" aria-label="Video feed">
+      <div class="stage-frame">
+        <video id="webcam" autoplay muted playsinline></video>
+        <canvas id="overlay"></canvas>
+
+        <div id="alertBanner" class="alert-banner" hidden>
+          <span class="alert-dot"></span>
+          TERLALU DEKAT!
+        </div>
+
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+      </div>
+
+      <!-- Signature element: gauge vertikal ala rangefinder -->
+      <div class="gauge" aria-hidden="true">
+        <div class="gauge-track">
+          <div class="gauge-fill-safe"></div>
+          <div id="gaugePointer" class="gauge-pointer" style="top: 50%"></div>
+          <span class="gauge-tick gauge-tick-top">150</span>
+          <span class="gauge-tick gauge-tick-mid">75</span>
+          <span class="gauge-tick gauge-tick-bot">0</span>
+        </div>
+        <span class="gauge-label">cm</span>
+      </div>
+    </section>
+
+    <!-- Panel kanan: kontrol & readout -->
+    <aside class="panel">
+      <div class="readout-block">
+        <span class="readout-label">Jarak Terukur</span>
+        <span id="distanceReadout" class="readout-value">-- cm</span>
+      </div>
+
+      <div class="field">
+        <label for="faceWidthSlider">Lebar wajah asli (cm)</label>
+        <div class="field-row">
+          <input type="range" id="faceWidthSlider" min="8" max="22" step="0.1" value="15" />
+          <input type="number" id="faceWidthInput" min="8" max="22" step="0.1" value="15" />
+        </div>
+        <p class="field-hint">Ukur lebar pipi-ke-pipi wajahmu, atau pakai default 15 cm.</p>
+      </div>
+
+      <div class="field">
+        <label for="thresholdSlider">Threshold jarak aman</label>
+        <div class="field-row">
+          <input type="range" id="thresholdSlider" min="20" max="120" step="1" value="60" />
+          <span id="thresholdValue" class="field-value">60 cm</span>
+        </div>
+        <p class="field-hint">Alert berbunyi bila jarak kurang dari nilai ini.</p>
+      </div>
+
+      <button id="calibrateBtn" class="btn btn-primary">
+        Calibrate <kbd>C</kbd>
+      </button>
+      <p id="calibrationInfo" class="calibration-info" data-state="empty">Belum dikalibrasi.</p>
+      <button id="resetBtn" class="btn btn-ghost">Hapus kalibrasi tersimpan</button>
+
+      <ol class="steps">
+        <li>Duduk tepat pada jarak sesuai slider threshold di atas.</li>
+        <li>Pastikan wajah terdeteksi (garis hijau muncul di video).</li>
+        <li>Tekan tombol <strong>Calibrate</strong> atau tombol <kbd>C</kbd> di keyboard.</li>
+        <li>Kalibrasi tersimpan otomatis di browser (localStorage), tahan meski di-refresh.</li>
+      </ol>
+    </aside>
+  </main>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+
+</html>
